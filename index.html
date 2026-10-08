@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6f2">
+  <meta name="description" content="Kalkulator online sederhana, cepat, dan mudah digunakan.">
+  <title>Kalkulator Online</title>
+  <style>
+    :root{color-scheme:light;--ink:#17211e;--muted:#75817c;--paper:#f4f6f2;--line:#e7ebe5;--deep:#213b32}
+    *{box-sizing:border-box}body{margin:0;min-height:100svh;display:grid;place-items:center;padding:24px 16px;background:radial-gradient(ellipse at 18% 18%,#e7f1d4 0,transparent 30%),radial-gradient(ellipse at 87% 82%,#e2ece8 0,transparent 32%),var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+    .calculator{width:min(100%,390px);padding:24px;border:1px solid white;border-radius:8px;background:rgba(255,255,255,.9);box-shadow:0 24px 70px #20392f1c}
+    header{display:flex;align-items:center;gap:12px;margin-bottom:22px}.mark{display:grid;grid-template-columns:repeat(2,7px);gap:3px;padding:9px;border-radius:8px;background:var(--deep)}.mark i{width:7px;height:7px;border-radius:2px;background:#d9f66f}.mark i:nth-child(2){opacity:.7}.mark i:nth-child(3){opacity:.5}.eyebrow{margin:0 0 2px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:1.5px}h1{margin:0;font-size:20px}.dot{width:8px;height:8px;margin-left:auto;border-radius:50%;background:#70ba73;box-shadow:0 0 0 4px #e7f5e6}
+    .display{min-height:112px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-end;margin-bottom:16px;padding:16px 4px 12px;border-bottom:1px solid var(--line);overflow:hidden}.expression{max-width:100%;min-height:18px;margin:0 0 8px;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.value{max-width:100%;font-size:clamp(36px,10vw,52px);font-weight:550;line-height:1.05;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis}.error{margin:8px 0 0;color:#b34435;font-size:12px}
+    .keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.key{aspect-ratio:1.13;display:grid;place-items:center;border:1px solid transparent;border-radius:6px;background:#f0f3ee;color:var(--ink);font:550 20px Arial,sans-serif;cursor:pointer;transition:transform .1s,background .12s}.key:hover{background:#e7ece5}.key:active{transform:scale(.96)}.key:focus-visible,.back:focus-visible{outline:3px solid #5e7e63;outline-offset:2px}.utility{background:#e7ece5;color:#44534c;font-size:16px}.operator{background:#edf2e5;color:#304834;font-size:22px}.equals{background:var(--deep);color:white;font-size:23px}.equals:hover{background:#2c5143}.wide{grid-column:span 2;aspect-ratio:auto}
+    footer{display:flex;align-items:center;gap:14px;margin-top:16px;color:#87918c;font-size:10px}kbd{padding:3px 5px;border:1px solid var(--line);border-radius:3px;background:#fafbf9;color:#53615a;font:inherit}.back{display:none;margin-left:auto;padding:6px 10px;border:1px solid var(--line);border-radius:5px;background:white;color:var(--deep);font-size:16px;cursor:pointer}
+    @media(max-width:380px){.calculator{padding:18px}.keys{gap:7px}.key{font-size:18px}footer{gap:9px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <main class="calculator" aria-label="Kalkulator">
+    <header><div class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div><p class="eyebrow">ALAT HITUNG</p><h1>Kalkulator</h1></div><span class="dot" aria-label="Siap digunakan"></span></header>
+    <section class="display" aria-live="polite" aria-atomic="true"><p class="expression" id="expression">Ketik atau tekan tombol</p><output class="value" id="value" aria-label="Nilai saat ini">0</output><p class="error" id="error" role="alert"></p></section>
+    <div class="keys" aria-label="Tombol kalkulator">
+      <button class="key utility" data-key="clear" aria-label="Hapus semua">AC</button><button class="key utility" data-key="sign" aria-label="Ubah tanda">±</button><button class="key utility" data-key="percent" aria-label="Persen">%</button><button class="key operator" data-key="divide" aria-label="Bagi">÷</button>
+      <button class="key" data-key="7">7</button><button class="key" data-key="8">8</button><button class="key" data-key="9">9</button><button class="key operator" data-key="multiply" aria-label="Kali">×</button>
+      <button class="key" data-key="4">4</button><button class="key" data-key="5">5</button><button class="key" data-key="6">6</button><button class="key operator" data-key="subtract" aria-label="Kurang">−</button>
+      <button class="key" data-key="1">1</button><button class="key" data-key="2">2</button><button class="key" data-key="3">3</button><button class="key operator" data-key="add" aria-label="Tambah">+</button>
+      <button class="key wide" data-key="0">0</button><button class="key" data-key="decimal" aria-label="Desimal">.</button><button class="key equals" data-key="equals" aria-label="Hasil">=</button>
+    </div>
+    <footer><span><kbd>Enter</kbd> hitung</span><span><kbd>⌫</kbd> hapus angka</span><button class="back" data-key="backspace" aria-label="Hapus satu karakter">⌫</button></footer>
+  </main>
+  <script>
+    (()=>{
+      const valueEl=document.querySelector('#value'),expressionEl=document.querySelector('#expression'),errorEl=document.querySelector('#error');
+      const symbols={add:'+',subtract:'−',multiply:'×',divide:'÷'},operators={'+':'add','-':'subtract','*':'multiply','/':'divide'};
+      let value='0',stored=null,operator=null,waiting=false,repeat=null,error=false,expression='';
+      const fmt=n=>{if(!Number.isFinite(n))throw Error('Angka terlalu besar untuk dihitung.');return String(Number(n.toPrecision(12)))};
+      const calculate=(a,op,b)=>{if(op==='divide'&&b===0)throw Error('Tidak dapat membagi dengan nol.');return fmt(({add:()=>a+b,subtract:()=>a-b,multiply:()=>a*b,divide:()=>a/b})[op]())};
+      const render=()=>{valueEl.textContent=value;expressionEl.textContent=expression||'Ketik atau tekan tombol';errorEl.textContent=error?errorEl.textContent:''};
+      function press(key){
+        if(key==='clear'){value='0';stored=null;operator=null;waiting=false;repeat=null;expression='';error=false;errorEl.textContent='';render();return}
+        if(error){value='0';stored=null;operator=null;waiting=false;repeat=null;expression='';error=false;errorEl.textContent='';if(!/^\d$/.test(key)&&key!=='decimal'){render();return}}
+        if(/^\d$/.test(key)){value=waiting||value==='Error'?key:value==='0'?key:value.length<15?value+key:value;waiting=false;expression='';repeat=null}
+        else if(key==='decimal'){if(waiting)value='0.';else if(!value.includes('.'))value+='.';waiting=false;expression='';repeat=null}
+        else if(key==='sign'){if(value!=='0')value=value.startsWith('-')?value.slice(1):'-'+value}
+        else if(key==='percent'){value=fmt(Number(value)/100);waiting=true;repeat=null}
+        else if(key==='backspace'){if(!waiting)value=value.length<=1||(value.length===2&&value[0]==='-')?'0':value.slice(0,-1)}
+        else if(key==='equals'){
+          try{if(operator&&stored!==null){const second=waiting?stored:Number(value);value=calculate(stored,operator,second);expression=`${fmt(stored)} ${symbols[operator]} ${fmt(second)} =`;repeat={operator,value:Number(fmt(second))};stored=null;operator=null;waiting=true}else if(repeat)value=calculate(Number(value),repeat.operator,repeat.value)}
+          catch(e){error=true;errorEl.textContent=e.message;value='Error';stored=null;operator=null}
+        }else if(symbols[key]){
+          const next=key,current=Number(value);
+          try{if(operator&&stored!==null&&!waiting){value=calculate(stored,operator,current);stored=Number(value)}else stored=current;operator=next;expression=`${fmt(Number(value))} ${symbols[next]}`;waiting=true;repeat=null}
+          catch(e){error=true;errorEl.textContent=e.message;value='Error';stored=null;operator=null}
+        }
+        render()
+      }
+      document.querySelector('.keys').addEventListener('click',e=>{const button=e.target.closest('button[data-key]');if(button)press(button.dataset.key)});
+      document.querySelector('.back').addEventListener('click',()=>press('backspace'));
+      window.addEventListener('keydown',e=>{if(e.target instanceof HTMLElement&&(e.target.isContentEditable||['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)))return;let k=e.key;if(/^\d$/.test(k)){e.preventDefault();press(k)}else if(operators[k]){e.preventDefault();press(operators[k])}else if(k==='Enter'||k==='='){e.preventDefault();press('equals')}else if(k==='.'){e.preventDefault();press('decimal')}else if(k==='%'){e.preventDefault();press('percent')}else if(k==='Escape'){e.preventDefault();press('clear')}else if(k==='Backspace'){e.preventDefault();press('backspace')}});
+    })();
+  </script>
+</body>
+</html>
